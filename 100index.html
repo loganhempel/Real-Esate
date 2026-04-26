@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 Small Nets — Empora Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a2e22;--bg2:#1f3528;--bg3:#243d2e;
+  --text:#f0ebe0;--muted:#a09880;--faint:#4a5e50;
+  --or:#d4781a;--or-l:#e8943a;--or-d:rgba(212,120,26,.14);--or-b:rgba(212,120,26,.32);
+  --cream:#f5f0e8;--gn:#4a9e6a;--gn-d:rgba(74,158,106,.12);--gn-b:rgba(74,158,106,.3);
+  --red:#c07060;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Lato',sans-serif;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(26,46,34,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(240,235,224,.06)}
+.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+.nav-wm{font-family:'Lato',sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.nav-wm b{color:var(--text);font-weight:700}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-progress{display:flex;gap:6px;align-items:center}
+.np-dot{width:6px;height:6px;border-radius:50%;background:rgba(240,235,224,.18);cursor:pointer;transition:all .25s}
+.np-dot.active{background:var(--or);transform:scale(1.3)}
+.np-dot.done{background:rgba(212,120,26,.5)}
+.nav-cta{padding:7px 18px;background:var(--or);border:none;border-radius:4px;color:#fff;font-family:'Lato',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:var(--or-l)}
+
+/* ── SLIDES CONTAINER ── */
+.slides{position:fixed;top:54px;left:0;right:0;bottom:0;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;opacity:0;pointer-events:none;transition:opacity .55s ease,transform .55s cubic-bezier(.4,0,.2,1);transform:translateY(30px)}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0)}
+.slide.exit-up{opacity:0;transform:translateY(-30px)}
+.slide.exit-down{opacity:0;transform:translateY(30px)}
+
+/* ── NAV ARROWS ── */
+.slide-nav{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:200;align-items:center}
+.snav-btn{width:42px;height:42px;border-radius:50%;background:rgba(240,235,224,.08);border:1px solid rgba(240,235,224,.14);color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.snav-btn:hover{background:rgba(240,235,224,.14);color:var(--text)}
+.snav-btn:disabled{opacity:.25;cursor:default}
+.snav-label{font-family:'Lato',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+
+/* ── TYPOGRAPHY ── */
+.pg-tag{font-family:'Lato',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--or);display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.pg-tag::before{content:'';width:18px;height:1px;background:var(--or)}
+h1{font-family:'Playfair Display',serif;font-size:clamp(42px,5.5vw,78px);font-weight:400;line-height:1.05;color:var(--cream)}
+h1 em{font-style:italic;color:var(--or)}
+h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,46px);font-weight:400;line-height:1.1;color:var(--cream)}
+h2 em{font-style:italic;color:var(--muted)}
+.sub{font-size:15px;font-weight:300;color:var(--muted);line-height:1.8;max-width:520px}
+.callout{border:1px solid var(--or-b);border-radius:6px;background:var(--or-d);padding:1rem 1.25rem;font-size:13px;font-weight:300;color:var(--text);line-height:1.75}
+.callout b{color:var(--or);font-weight:700}
+
+/* ── SLIDE 1: HERO ── */
+#s1{background:var(--bg);overflow:hidden}
+#s1::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(212,120,26,.07) 0%,transparent 70%);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,black 0%,transparent 100%)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 9px;border-radius:30px;border:1px solid var(--or-b);background:var(--or-d);font-family:'Lato',sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--or);margin-bottom:2rem}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--or);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-h1{text-align:center;margin-bottom:.3em;position:relative;z-index:1}
+.hero-line2{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,58px);font-weight:400;color:var(--muted);display:flex;align-items:baseline;justify-content:center;gap:.22em;flex-wrap:nowrap;white-space:nowrap;margin-bottom:1.75rem;position:relative;z-index:1}
+.hero-line2 .st{color:var(--muted);white-space:nowrap;flex-shrink:0}
+.cw-wrap{display:inline-block;flex-shrink:0}
+.cw{color:var(--or);font-style:italic;display:inline-block;white-space:nowrap}
+.cb{display:block;height:2px;background:linear-gradient(90deg,var(--or),transparent);border-radius:2px;margin-top:2px;transition:width .3s}
+.hero-sub{font-size:15px;font-weight:300;color:var(--muted);max-width:440px;line-height:1.8;text-align:center;margin-bottom:2rem;position:relative;z-index:1}
+.hero-ctas{display:flex;gap:10px;justify-content:center;margin-bottom:3rem;position:relative;z-index:1}
+.btn-p{padding:13px 28px;background:var(--or);border:none;border-radius:4px;color:#fff;font-family:'Lato',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em}
+.btn-p:hover{background:var(--or-l);transform:translateY(-1px)}
+.btn-g{padding:13px 28px;background:transparent;border:1px solid rgba(240,235,224,.18);border-radius:4px;color:var(--muted);font-family:'Lato',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-g:hover{border-color:rgba(240,235,224,.35);color:var(--text)}
+.hero-stats{display:flex;border:1px solid rgba(240,235,224,.08);border-radius:8px;overflow:hidden;position:relative;z-index:1}
+.hs{padding:1rem 2rem;border-right:1px solid rgba(240,235,224,.08)}
+.hs:last-child{border-right:none}
+.hs-n{font-family:'Playfair Display',serif;font-size:24px;color:var(--cream);line-height:1;margin-bottom:2px}
+.hs-n span{color:var(--or)}
+.hs-l{font-size:10px;font-weight:300;color:var(--muted)}
+
+/* ── SLIDE 2: NETWORK VIZ ── */
+#s2{background:var(--bg2)}
+.s2-inner{width:100%;max-width:1040px;display:grid;grid-template-columns:300px 1fr;gap:2.5rem;align-items:center}
+.s2-left{display:flex;flex-direction:column;gap:1.25rem}
+.viz-tabs{display:flex;flex-direction:column;gap:8px;margin-top:1rem}
+.vtab{padding:10px 16px;font-family:'Lato',sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid rgba(240,235,224,.12);border-radius:6px;background:transparent;color:var(--muted);text-align:left}
+.vtab.active{background:var(--or);border-color:var(--or);color:#fff}
+.vd-body{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65;padding:1rem;background:var(--bg3);border-radius:6px;border:1px solid rgba(240,235,224,.07);min-height:80px;transition:all .3s}
+.viz-canvas-wrap{position:relative;border:1px solid rgba(240,235,224,.08);border-radius:10px;overflow:hidden;background:var(--bg3)}
+canvas#netCanvas{display:block;width:100%;height:100%}
+.viz-label{position:absolute;bottom:.75rem;left:50%;transform:translateX(-50%);font-family:'Lato',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);pointer-events:none;white-space:nowrap}
+
+/* ── SLIDE 3: FLOWCHART ── */
+#s3{background:var(--bg)}
+.s3-inner{width:100%;max-width:1040px}
+.fc-title{text-align:center;margin-bottom:2rem}
+.fc-wrap{display:flex;gap:0;align-items:stretch;width:100%}
+.fc-col{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.fc-col::after{content:'';position:absolute;top:44px;left:calc(50% + 44px);right:0;height:1px;background:linear-gradient(90deg,rgba(212,120,26,.5),rgba(212,120,26,.1));pointer-events:none}
+.fc-col:last-child::after{display:none}
+.fc-node{width:88px;height:88px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;border:2px solid rgba(240,235,224,.1);background:var(--bg2);margin-bottom:1rem;position:relative;z-index:1}
+.fc-node:hover,.fc-node.active{border-color:var(--or);background:var(--or-d);transform:scale(1.08)}
+.fc-node.done{border-color:var(--gn);background:var(--gn-d)}
+.fc-icon{font-size:22px;margin-bottom:3px;line-height:1}
+.fc-step{font-family:'Lato',sans-serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--or)}
+.fc-label{font-family:'Playfair Display',serif;font-size:12px;color:var(--cream);text-align:center;line-height:1.25;padding:0 4px}
+.fc-detail{background:var(--bg2);border:1px solid rgba(240,235,224,.07);border-radius:8px;padding:1.25rem 1.5rem;margin-top:1.25rem;min-height:100px;transition:all .35s}
+.fc-detail-inner{display:none}
+.fc-detail-inner.show{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fcd-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--cream);margin-bottom:6px}
+.fcd-body{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
+.fcd-tag{display:inline-block;padding:3px 8px;border-radius:3px;font-family:'Lato',sans-serif;font-size:9px;letter-spacing:.08em;text-transform:uppercase;background:var(--or-d);border:1px solid var(--or-b);color:var(--or);margin-bottom:8px}
+
+/* ── SLIDE 4: ROI CALCULATOR ── */
+#s4{background:var(--bg2)}
+.s4-inner{width:100%;max-width:900px}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.75rem}
+.roi-panel{background:var(--bg3);border:1px solid rgba(240,235,224,.07);border-radius:10px;padding:1.75rem}
+.inp-grp{margin-bottom:1.5rem}
+.inp-label{font-family:'Lato',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:8px}
+.inp-row{display:flex;align-items:center;gap:12px}
+input[type=range]{flex:1;-webkit-appearance:none;height:2px;background:rgba(240,235,224,.12);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--or);cursor:pointer}
+.inp-val{font-family:'Playfair Display',serif;font-size:15px;color:var(--cream);min-width:85px;text-align:right}
+.out-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid rgba(240,235,224,.06)}
+.out-row:last-of-type{border-bottom:none}
+.out-lbl{font-size:12px;font-weight:300;color:var(--muted)}
+.out-v{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream)}
+.out-v.neg{color:#c07060}.out-v.pos{color:#5ab88a}.out-v.big{font-size:34px}
+.roi-verdict{margin-top:1rem;padding:.9rem 1.1rem;border-radius:6px;font-size:12px;font-weight:300;line-height:1.7}
+.v-ok{background:rgba(58,158,111,.1);border:1px solid rgba(58,158,111,.25);color:#7fcfa8}
+.v-bad{background:rgba(200,80,70,.1);border:1px solid rgba(200,80,70,.25);color:#e09090}
+
+/* ── SLIDE 5: CONTACT RACE ── */
+#s5{background:var(--bg)}
+.s5-inner{width:100%;max-width:820px}
+.race-bars{display:flex;flex-direction:column;gap:14px;margin:1.75rem 0}
+.rb-row{display:grid;grid-template-columns:95px 1fr 60px;gap:14px;align-items:center}
+.rb-lbl{font-size:12px;font-weight:700;color:var(--text);text-align:right}
+.rb-track{height:32px;background:rgba(240,235,224,.05);border-radius:5px;overflow:hidden}
+.rb-fill{height:100%;border-radius:5px;transition:width 1.1s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;padding-left:12px;font-family:'Lato',sans-serif;font-size:11px;font-weight:700;color:#fff;white-space:nowrap}
+.rb-pct{font-family:'Playfair Display',serif;font-size:17px;color:var(--cream)}
+.race-ctrl{display:flex;gap:12px;align-items:center}
+.race-btn{padding:11px 24px;background:var(--or);border:none;border-radius:4px;color:#fff;font-family:'Lato',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s;letter-spacing:.04em}
+.race-btn:hover{background:var(--or-l)}
+.race-note{font-size:12px;font-weight:300;color:var(--faint);max-width:460px;line-height:1.6}
+
+/* ── SLIDE 6: BUDGET ALLOCATOR ── */
+#s6{background:var(--bg2)}
+.s6-inner{width:100%;max-width:960px;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+.alloc-total{font-family:'Lato',sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:1.25rem}
+.alloc-total span{color:var(--or);font-weight:700}
+.sub-row{margin-bottom:1rem}
+.sub-hd{font-size:12px;font-weight:700;color:var(--text);display:flex;justify-content:space-between;margin-bottom:4px}
+.sub-hd span{font-weight:300;color:var(--muted)}
+.sub-track{height:7px;background:rgba(240,235,224,.06);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.sub-fill{height:100%;background:var(--or);border-radius:4px;transition:width .3s}
+input.sl{width:100%;-webkit-appearance:none;height:2px;background:rgba(240,235,224,.1);border-radius:2px;outline:none;cursor:pointer}
+input.sl::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--or);cursor:pointer}
+.alloc-right{background:var(--bg3);border:1px solid rgba(240,235,224,.07);border-radius:10px;padding:1.5rem}
+.ar-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);margin-bottom:.5rem;transition:color .3s}
+.ar-body{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65;margin-bottom:1.25rem;min-height:72px}
+.avb-row{display:flex;gap:8px;align-items:center;margin-bottom:5px}
+.avb-lbl{font-size:10px;font-weight:300;color:var(--muted);width:76px;flex-shrink:0}
+.avb-track{flex:1;height:5px;background:rgba(240,235,224,.06);border-radius:3px;overflow:hidden}
+.avb-fill{height:100%;border-radius:3px;transition:width .3s}
+.avb-v{font-size:10px;font-weight:700;color:var(--text);width:30px;text-align:right;flex-shrink:0}
+
+/* ── SLIDE 7: LEAD CAPTURE ── */
+#s7{background:var(--bg)}
+#s7::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse at top,rgba(212,120,26,.08) 0%,transparent 70%);pointer-events:none}
+.s7-inner{width:100%;max-width:860px;display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start;position:relative;z-index:1}
+.s7-left{}
+.s7-points{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
+.s7-pt{display:flex;gap:12px;align-items:flex-start;font-size:13px;font-weight:300;color:var(--muted);line-height:1.5}
+.s7-pt-icon{width:22px;height:22px;border-radius:50%;background:var(--or-d);border:1px solid var(--or-b);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:var(--or)}
+.lead-form{background:var(--bg2);border:1px solid rgba(240,235,224,.08);border-radius:10px;padding:1.75rem}
+.lf-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);margin-bottom:.35rem}
+.lf-sub{font-size:12px;font-weight:300;color:var(--muted);margin-bottom:1.5rem;line-height:1.5}
+.lf-field{margin-bottom:1rem}
+.lf-label{display:block;font-family:'Lato',sans-serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.lf-input{width:100%;background:var(--bg3);border:1px solid rgba(240,235,224,.1);border-radius:4px;padding:9px 12px;color:var(--cream);font-family:'Lato',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.lf-input:focus{border-color:var(--or-b)}
+.lf-input::placeholder{color:var(--faint)}
+.lf-select{width:100%;background:var(--bg3);border:1px solid rgba(240,235,224,.1);border-radius:4px;padding:9px 12px;color:var(--cream);font-family:'Lato',sans-serif;font-size:13px;outline:none;cursor:pointer;appearance:none}
+.lf-confirm{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:var(--or-d);border:1px solid var(--or-b);border-radius:5px;margin-bottom:1.25rem;cursor:pointer}
+.lf-cb{width:14px;height:14px;border-radius:2px;border:1px solid var(--or-b);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:transparent}
+.lf-cb.checked{background:var(--or);border-color:var(--or)}
+.lf-cb.checked::after{content:'✓';font-size:9px;color:#fff;font-weight:700}
+.lf-ct{font-size:11px;font-weight:300;color:var(--text);line-height:1.5;user-select:none}
+.lf-submit{width:100%;padding:13px;background:var(--or);border:none;border-radius:4px;color:#fff;font-family:'Lato',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.02em}
+.lf-submit:hover{background:var(--or-l)}
+.lf-submit:disabled{opacity:.4;cursor:default}
+.lf-success{display:none;text-align:center;padding:2rem 1rem}
+.lf-success-icon{font-size:44px;margin-bottom:1rem}
+.lf-success-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);margin-bottom:.5rem}
+.lf-success-body{font-size:13px;font-weight:300;color:var(--muted);line-height:1.65}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="goTo(0)">
+    <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="none" stroke="#d4781a" stroke-width=".9"/><line x1="10" y1="1" x2="10" y2="19" stroke="#d4781a" stroke-width=".7"/><line x1="1" y1="10" x2="19" y2="10" stroke="#d4781a" stroke-width=".7"/><circle cx="10" cy="4.5" r="1.3" fill="#d4781a"/><circle cx="6.8" cy="12.2" r=".9" fill="#d4781a"/><circle cx="13.2" cy="12.2" r=".9" fill="#d4781a"/></svg>
+    <div class="nav-wm"><b>Empora</b> Media</div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-progress" id="navDots"></div>
+    <button class="nav-cta" onclick="goTo(6)">Get the system →</button>
+  </div>
+</nav>
+
+<!-- ══════════════════ SLIDE 1: HERO ══════════════════ -->
+<div class="slides">
+<div class="slide active" id="s1">
+  <div class="hero-grid"></div>
+  <div class="hero-badge"><span class="badge-dot"></span>Real Estate Lead Generation — Empora Media 2026</div>
+  <h1 class="hero-h1">The agent who owns<br>the suburb <em>wins.</em></h1>
+  <div class="hero-line2">
+    <span class="st">100 small nets.</span>
+    <span class="st">Endless</span>
+    <div class="cw-wrap"><span class="cw" id="cw">listings.</span><span class="cb" id="cb"></span></div>
+  </div>
+  <p class="hero-sub">Suburb-specific ads. Two offer tracks. A lead form that filters itself. Follow-up in five minutes.</p>
+  <div class="hero-ctas">
+    <button class="btn-p" onclick="goTo(1)">See how it works →</button>
+    <button class="btn-g" onclick="goTo(6)">Get started</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-n"><span>5</span>min</div><div class="hs-l">Max follow-up</div></div>
+    <div class="hs"><div class="hs-n"><span>2</span>×</div><div class="hs-l">CVR lift</div></div>
+    <div class="hs"><div class="hs-n"><span>30</span>d</div><div class="hs-l">Retargeting</div></div>
+    <div class="hs"><div class="hs-n"><span>3–5</span></div><div class="hs-l">Target suburbs</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 2: NETWORK ══════════════════ -->
+<div class="slide" id="s2">
+  <div class="s2-inner">
+    <div class="s2-left">
+      <div>
+        <div class="pg-tag">The Core Idea</div>
+        <h2>100 small nets.<br><em>Not one big cast.</em></h2>
+      </div>
+      <div class="viz-tabs">
+        <button class="vtab" id="tab-one" onclick="setMode('one')">☐ One Big Net</button>
+        <button class="vtab active" id="tab-many" onclick="setMode('many')">◉ 100 Small Nets</button>
+      </div>
+      <div class="vd-body" id="vdBody">Suburb-specific ads shown only to local homeowners. Each cluster is one suburb — dense connections inside, sparse retargeting links between. Hover a node to see the suburb name.</div>
+    </div>
+    <div style="flex:1">
+      <div class="viz-canvas-wrap" style="height:420px">
+        <canvas id="netCanvas"></canvas>
+        <div class="viz-label" id="vizLabel">100 Small Nets — hover a node</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 3: FLOWCHART ══════════════════ -->
+<div class="slide" id="s3">
+  <div class="s3-inner">
+    <div class="fc-title">
+      <div class="pg-tag" style="justify-content:center">The System</div>
+      <h2 style="text-align:center">Click each stage to see<br><em>exactly how it works.</em></h2>
+    </div>
+    <div class="fc-wrap" id="fcWrap"></div>
+    <div class="fc-detail" id="fcDetail">
+      <div class="fc-detail-inner show" id="fcDetailContent">
+        <div class="fcd-tag">Click any stage above</div>
+        <div class="fcd-title">Five stages. One machine.</div>
+        <div class="fcd-body">Click any stage above to see the mechanism behind it — what it does, why it matters, and what it cannot do alone. Each stage feeds the next.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 4: ROI ══════════════════ -->
+<div class="slide" id="s4">
+  <div class="s4-inner">
+    <div class="pg-tag">Return on Investment</div>
+    <h2>Put your numbers in.<br><em>See exactly when it pays.</em></h2>
+    <div class="roi-grid">
+      <div class="roi-panel">
+        <div class="inp-grp">
+          <label class="inp-label">Average commission per listing (NZD)</label>
+          <div class="inp-row"><input type="range" id="r1" min="3000" max="25000" step="500" value="9000"><span class="inp-val" id="d1">$9,000</span></div>
+        </div>
+        <div class="inp-grp">
+          <label class="inp-label">Listings per month from ads</label>
+          <div class="inp-row"><input type="range" id="r2" min="0" max="8" step="1" value="2"><span class="inp-val" id="d2">2 listings</span></div>
+        </div>
+        <div class="inp-grp">
+          <label class="inp-label">Monthly retainer (NZD)</label>
+          <div class="inp-row"><input type="range" id="r3" min="800" max="3000" step="100" value="1500"><span class="inp-val" id="d3">$1,500</span></div>
+        </div>
+        <div class="inp-grp" style="margin-bottom:0">
+          <label class="inp-label">Monthly ad spend (NZD)</label>
+          <div class="inp-row"><input type="range" id="r4" min="300" max="2000" step="100" value="800"><span class="inp-val" id="d4">$800</span></div>
+        </div>
+      </div>
+      <div class="roi-panel">
+        <div class="out-row"><div class="out-lbl">Total cost</div><div class="out-v neg" id="o1">−$2,300</div></div>
+        <div class="out-row"><div class="out-lbl">Gross commission</div><div class="out-v pos" id="o2">+$18,000</div></div>
+        <div class="out-row"><div class="out-lbl">Net monthly return</div><div class="out-v big pos" id="o3">+$15,700</div></div>
+        <div id="roi-vd" class="roi-verdict v-ok">
+          System returns <b id="rmult">7.8×</b> every dollar invested. Break-even: <b id="rbe">less than 1 listing</b>/month.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 5: RACE ══════════════════ -->
+<div class="slide" id="s5">
+  <div class="s5-inner">
+    <div class="pg-tag">The 5-Minute Rule</div>
+    <h2>The listing is won or lost<br><em>in the first five minutes.</em></h2>
+    <div class="race-bars" id="raceBars">
+      <div class="rb-row"><div class="rb-lbl">Within 1 min</div><div class="rb-track"><div class="rb-fill" id="rb0" style="width:0%;background:#5ab88a"></div></div><div class="rb-pct" id="rp0" style="color:#5ab88a">—</div></div>
+      <div class="rb-row"><div class="rb-lbl">5 minutes</div><div class="rb-track"><div class="rb-fill" id="rb1" style="width:0%;background:#8ab870"></div></div><div class="rb-pct" id="rp1" style="color:#8ab870">—</div></div>
+      <div class="rb-row"><div class="rb-lbl">30 minutes</div><div class="rb-track"><div class="rb-fill" id="rb2" style="width:0%;background:#c49a50"></div></div><div class="rb-pct" id="rp2" style="color:#c49a50">—</div></div>
+      <div class="rb-row"><div class="rb-lbl">2 hours</div><div class="rb-track"><div class="rb-fill" id="rb3" style="width:0%;background:#c07060"></div></div><div class="rb-pct" id="rp3" style="color:#c07060">—</div></div>
+      <div class="rb-row"><div class="rb-lbl">Next day</div><div class="rb-track"><div class="rb-fill" id="rb4" style="width:0%;background:#804030"></div></div><div class="rb-pct" id="rp4" style="color:#804030">—</div></div>
+    </div>
+    <div class="race-ctrl">
+      <button class="race-btn" id="raceBtn" onclick="runRace()">▶ Start the clock</button>
+      <div class="race-note">Contact rate drops 9× from 1 minute to 30 minutes. The system fires the follow-up automatically — the agent doesn't have to be watching.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 6: BUDGET ══════════════════ -->
+<div class="slide" id="s6">
+  <div class="s6-inner">
+    <div>
+      <div class="pg-tag">Budget Concentration</div>
+      <h2>Own three suburbs.<br><em>Don't exist in twenty.</em></h2>
+      <p class="sub" style="font-size:13px;margin-top:.75rem;margin-bottom:1.5rem">Drag the sliders. Watch what happens when you spread vs concentrate. The right panel updates live.</p>
+      <div class="alloc-total">Monthly budget: <span id="totalB">$800</span> · Remaining: <span id="leftB">$800</span></div>
+      <div id="subSliders"></div>
+    </div>
+    <div class="alloc-right">
+      <div class="ar-title" id="arTitle">Allocation overview</div>
+      <div class="ar-body" id="arBody">Allocate budget to suburbs to see your presence score in each. Suburbs under $80/month generate minimal impressions.</div>
+      <div id="arBars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SLIDE 7: LEAD FORM ══════════════════ -->
+<div class="slide" id="s7">
+  <div class="s7-inner">
+    <div class="s7-left">
+      <div class="pg-tag">Ready to Build This</div>
+      <h2>This is a system.<br><em>Not a campaign.</em></h2>
+      <div class="s7-points">
+        <div class="s7-pt"><div class="s7-pt-icon">◎</div><div>Suburb-specific ads shown only to homeowners in your target suburbs</div></div>
+        <div class="s7-pt"><div class="s7-pt-icon">◈</div><div>Two offer tracks — appraisal (ready sellers) + price estimate (future pipeline)</div></div>
+        <div class="s7-pt"><div class="s7-pt-icon">◆</div><div>Lead form with built-in filter — only serious sellers submit</div></div>
+        <div class="s7-pt"><div class="s7-pt-icon">→</div><div>5-minute follow-up fires automatically — no manual watching required</div></div>
+        <div class="s7-pt"><div class="s7-pt-icon">↺</div><div>Retargeting loop keeps Fantail in front of every visitor for 30 days</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="lead-form" id="leadForm">
+        <div class="lf-title">Let's build your system</div>
+        <div class="lf-sub">Tell us about you and your target suburbs. We'll follow up within 24 hours.</div>
+        <div class="lf-field"><label class="lf-label">Your name</label><input class="lf-input" id="lf1" type="text" placeholder="Full name"></div>
+        <div class="lf-field"><label class="lf-label">Agency & role</label><input class="lf-input" id="lf2" type="text" placeholder="e.g. Harcourts — Listing Agent"></div>
+        <div class="lf-field"><label class="lf-label">Email address</label><input class="lf-input" id="lf3" type="email" placeholder="you@agency.co.nz"></div>
+        <div class="lf-field"><label class="lf-label">Phone number</label><input class="lf-input" id="lf4" type="tel" placeholder="021 000 0000"></div>
+        <div class="lf-field">
+          <label class="lf-label">Primary target suburbs</label>
+          <select class="lf-select lf-input" id="lf5">
+            <option value="">Select your main suburb</option>
+            <option>Khandallah</option><option>Karori</option><option>Ngaio</option>
+            <option>Johnsonville</option><option>Miramar</option><option>Island Bay</option>
+            <option>Newtown</option><option>Petone</option><option>Lower Hutt</option>
+            <option>Other Wellington suburb</option>
+          </select>
+        </div>
+        <div class="lf-confirm" onclick="toggleCb()">
+          <div class="lf-cb" id="lfCb"></div>
+          <div class="lf-ct">I'm genuinely interested in running suburb-specific digital campaigns for my listings.</div>
+        </div>
+        <button class="lf-submit" id="lfSubmit" onclick="submitForm()">Get the system →</button>
+      </div>
+      <div class="lf-success" id="lfSuccess">
+        <div class="lf-success-icon">✓</div>
+        <div class="lf-success-title">You're in the system.</div>
+        <div class="lf-success-body">Logan will be in touch within 24 hours.<br>In the meantime — go back and run the ROI calculator with your actual numbers.</div>
+        <button class="btn-g" style="margin-top:1.5rem" onclick="goTo(3)">← Run the ROI calculator</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides -->
+
+<!-- NAV ARROWS -->
+<div class="slide-nav">
+  <button class="snav-btn" id="prevBtn" onclick="prev()" disabled>↑</button>
+  <div class="snav-label" id="slideLabel">1 / 7</div>
+  <button class="snav-btn" id="nextBtn" onclick="next()">↓</button>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// SLIDE ENGINE
+// ══════════════════════════════════════
+const TOTAL=7;
+let cur=0;
+
+function buildDots(){
+  const wrap=document.getElementById('navDots');
+  for(let i=0;i<TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='np-dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i);
+    d.title='Page '+(i+1);
+    wrap.appendChild(d);
+  }
+}
+buildDots();
+
+function goTo(n,dir){
+  if(n<0||n>=TOTAL||n===cur)return;
+  const slides=document.querySelectorAll('.slide');
+  const going=n>cur?'exit_up':'exit_down';
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add(n>cur?'exit-up':'exit-down');
+  setTimeout(()=>slides[cur-0]&&slides[cur-0].classList.remove('exit-up','exit-down'),600);
+  cur=n;
+  slides[cur].classList.add('active');
+  updateUI();
+  // trigger animations for specific slides
+  if(cur===1)setTimeout(()=>{ cancelAnimationFrame(animFrame);resize();draw(); },100);
+  if(cur===4){raceRan=false;resetRace();}
+}
+
+function next(){goTo(cur+1)}
+function prev(){goTo(cur-1)}
+
+function updateUI(){
+  const dots=document.querySelectorAll('.np-dot');
+  dots.forEach((d,i)=>{
+    d.className='np-dot'+(i===cur?' active':i<cur?' done':'');
+  });
+  document.getElementById('prevBtn').disabled=cur===0;
+  document.getElementById('nextBtn').disabled=cur===TOTAL-1;
+  document.getElementById('slideLabel').textContent=(cur+1)+' / '+TOTAL;
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowRight')next();
+  if(e.key==='ArrowUp'||e.key==='ArrowLeft')prev();
+});
+
+// Touch swipe
+let ty=0;
+document.addEventListener('touchstart',e=>ty=e.touches[0].clientY,{passive:true});
+document.addEventListener('touchend',e=>{
+  const d=ty-e.changedTouches[0].clientY;
+  if(Math.abs(d)>50){d>0?next():prev();}
+},{passive:true});
+
+// ══════════════════════════════════════
+// WORD CYCLING
+// ══════════════════════════════════════
+const words=['listings.','appraisals.','results.','pipeline.','momentum.','growth.'];
+let wi=0;
+const cwEl=document.getElementById('cw'),cbEl=document.getElementById('cb');
+function setBar(){cbEl.style.width=cwEl.offsetWidth+'px'}
+setTimeout(setBar,150);
+function cycleWord(){
+  cwEl.style.transition='opacity .22s,transform .22s';
+  cwEl.style.opacity='0';cwEl.style.transform='translateY(-10px)';
+  setTimeout(()=>{
+    wi=(wi+1)%words.length;cwEl.textContent=words[wi];
+    cwEl.style.transition='none';cwEl.style.transform='translateY(10px)';cwEl.style.opacity='0';
+    setTimeout(()=>{cwEl.style.transition='opacity .22s,transform .22s';cwEl.style.opacity='1';cwEl.style.transform='translateY(0)';setTimeout(setBar,250);},20);
+  },220);
+}
+setInterval(cycleWord,2200);
+
+// ══════════════════════════════════════
+// NETWORK VISUALISATION
+// ══════════════════════════════════════
+const canvas=document.getElementById('netCanvas');
+const ctx=canvas.getContext('2d');
+let mode='many',nodes=[],edges=[],animFrame,hovered=null,tick=0;
+const DPR=window.devicePixelRatio||1;
+
+function resize(){
+  const wrap=canvas.parentElement;
+  const W=wrap.clientWidth,H=wrap.clientHeight;
+  canvas.width=W*DPR;canvas.height=H*DPR;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(DPR,DPR);
+  build();
+}
+
+function rnd(a,b){return a+Math.random()*(b-a)}
+
+function build(){
+  nodes=[];edges=[];
+  const W=canvas.width/DPR,H=canvas.height/DPR;
+  if(mode==='many'){
+    const clusters=[
+      {x:W*.14,y:H*.28,label:'Khandallah'},{x:W*.38,y:.14*H,label:'Karori'},
+      {x:W*.63,y:.18*H,label:'Ngaio'},{x:W*.85,y:.32*H,label:'Johnsonville'},
+      {x:W*.78,y:.7*H,label:'Miramar'},{x:W*.44,y:.82*H,label:'Island Bay'},
+      {x:W*.16,y:.72*H,label:'Newtown'}
+    ];
+    clusters.forEach((cl,ci)=>{
+      const count=11+Math.floor(Math.random()*4),clNodes=[];
+      for(let i=0;i<count;i++){
+        const angle=(i/count)*Math.PI*2,r=rnd(26,62);
+        const n={x:cl.x+Math.cos(angle)*r,y:cl.y+Math.sin(angle)*r,r:rnd(3,5.5),cluster:ci,label:cl.label,baseX:cl.x+Math.cos(angle)*r,baseY:cl.y+Math.sin(angle)*r,phase:rnd(0,Math.PI*2)};
+        nodes.push(n);clNodes.push(nodes.length-1);
+      }
+      for(let i=0;i<clNodes.length;i++)for(let j=i+1;j<clNodes.length;j++)if(Math.random()<.35)edges.push([clNodes[i],clNodes[j],.6]);
+    });
+    for(let i=0;i<clusters.length;i++)for(let j=i+1;j<clusters.length;j++)if(Math.random()<.2)edges.push([i*12,j*12,.15]);
+  } else {
+    nodes.push({x:W/2,y:H/2,r:10,cluster:0,label:'Generic Wellington',baseX:W/2,baseY:H/2,phase:0,hub:true});
+    for(let i=0;i<20;i++){
+      const a=(i/20)*Math.PI*2,r=rnd(100,170);
+      nodes.push({x:W/2+Math.cos(a)*r,y:H/2+Math.sin(a)*r,r:rnd(2,4),cluster:1,label:'Generic lead',baseX:W/2+Math.cos(a)*r,baseY:H/2+Math.sin(a)*r,phase:rnd(0,Math.PI*2)});
+      edges.push([0,i+1,.45]);
+    }
+  }
+}
+
+function draw(){
+  const W=canvas.width/DPR,H=canvas.height/DPR;
+  ctx.clearRect(0,0,W,H);tick+=.012;
+  nodes.forEach(n=>{n.x=n.baseX+Math.sin(tick+n.phase)*4;n.y=n.baseY+Math.cos(tick*.7+n.phase)*3;});
+  const GN='rgba(74,158,106,',OR='rgba(212,120,26,';
+  edges.forEach(([a,b,alpha])=>{
+    if(!nodes[a]||!nodes[b])return;
+    const hl=(hovered&&(nodes[a].cluster===hovered.cluster||nodes[b].cluster===hovered.cluster));
+    const col=mode==='many'?GN:OR;
+    ctx.beginPath();ctx.moveTo(nodes[a].x,nodes[a].y);ctx.lineTo(nodes[b].x,nodes[b].y);
+    ctx.strokeStyle=col+(hl?Math.min(alpha*2.5,.9):alpha)+')';ctx.lineWidth=hl?1.2:.6;ctx.stroke();
+  });
+  nodes.forEach(n=>{
+    const hl=hovered&&n.cluster===hovered.cluster;
+    const col=mode==='many'?GN:(n.hub?OR:'rgba(180,120,60,');
+    if(hl){ctx.beginPath();ctx.arc(n.x,n.y,n.r*2.8,0,Math.PI*2);ctx.fillStyle=col+'.1)';ctx.fill();}
+    ctx.beginPath();ctx.arc(n.x,n.y,hl?n.r*1.7:n.r,0,Math.PI*2);
+    ctx.fillStyle=col+(hl?.95:(mode==='many'?.75:.5))+')';ctx.fill();
+  });
+  if(hovered){
+    ctx.font='bold 11px Lato,sans-serif';ctx.fillStyle='rgba(240,235,224,.9)';ctx.textAlign='center';
+    const lx=Math.min(Math.max(hovered.x,60),W-60);
+    ctx.fillText(hovered.label,lx,hovered.y>H/2?hovered.y-18:hovered.y+22);
+  }
+  animFrame=requestAnimationFrame(draw);
+}
+
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  let closest=null,dist=999;
+  nodes.forEach(n=>{const d=Math.hypot(n.x-mx,n.y-my);if(d<dist){dist=d;closest=n;}});
+  hovered=dist<42?closest:null;
+});
+canvas.addEventListener('mouseleave',()=>hovered=null);
+
+function setMode(m){
+  mode=m;
+  document.getElementById('tab-one').classList.toggle('active',m==='one');
+  document.getElementById('tab-many').classList.toggle('active',m==='many');
+  document.getElementById('vizLabel').textContent=m==='many'?'100 Small Nets — hover a node':'One Big Net — one campaign, everyone sees the same ad';
+  document.getElementById('vdBody').textContent=m==='many'
+    ?'Suburb-specific ads shown only to local homeowners. Each cluster is one suburb — dense connections inside, sparse retargeting links between. Hover a node to see the suburb name.'
+    :'One generic Wellington campaign. Single hub, thin spokes, low relevance. The Khandallah homeowner sees the same ad as someone in Miramar. Neither feels spoken to. Most scroll past.';
+  build();
+}
+
+// ══════════════════════════════════════
+// FLOWCHART
+// ══════════════════════════════════════
+const FC_STAGES=[
+  {icon:'📡',step:'Stage 1',label:'Suburb Ads',tag:'Meta + Google',title:'Suburb-targeted ads',body:'Ads shown only to homeowners in your target suburbs. "Thinking about selling in Khandallah?" — that line, seen only by Khandallah homeowners, generates curiosity clicks from people who feel personally addressed.'},
+  {icon:'🎯',step:'Stage 2',label:'Two Offers',tag:'Dual track',title:'High-intent + Low-friction offers',body:'Appraisal ads target ready sellers. Price estimate ads capture the curious. Running both simultaneously means you own every stage of the seller decision — from "I wonder" to "I\'m ready."'},
+  {icon:'📋',step:'Stage 3',label:'Lead Form',tag:'Filter built in',title:'The form that filters itself',body:'No autofill. Mandatory phone. One confirmation checkbox. Each friction point removes a tyre-kicker without deterring a serious seller. The agent gets a smaller but dramatically higher-quality list.'},
+  {icon:'⚡',step:'Stage 4',label:'5-Min Call',tag:'Auto + manual',title:'Follow-up in five minutes',body:'The moment the form submits, an auto-email goes to the lead and a push notification goes to the agent. The seller is still at their phone. Contact rates at 5 minutes are 9× higher than at 30 minutes.'},
+  {icon:'🔄',step:'Stage 5',label:'Retargeting',tag:'30-day loop',title:'The loop that recovers lost leads',body:'Every person who visits the landing page but doesn\'t submit gets followed with suburb-specific ads on Meta for 30 days. Without this, you pay for the click once and the visitor is gone. With it, you recover 15–30% of them.'},
+];
+let activeFC=null;
+
+function buildFC(){
+  const wrap=document.getElementById('fcWrap');
+  wrap.innerHTML=FC_STAGES.map((s,i)=>`
+    <div class="fc-col">
+      <div class="fc-node" id="fcn${i}" onclick="selectFC(${i})">
+        <div class="fc-icon">${s.icon}</div>
+        <div class="fc-step">${s.step}</div>
+      </div>
+      <div class="fc-label">${s.label}</div>
+    </div>
+  `).join('');
+}
+buildFC();
+
+function selectFC(i){
+  FC_STAGES.forEach((_,j)=>{
+    document.getElementById('fcn'+j).classList.toggle('active',j===i);
+  });
+  const s=FC_STAGES[i];
+  const det=document.getElementById('fcDetailContent');
+  det.className='fc-detail-inner';
+  setTimeout(()=>{
+    det.innerHTML=`<div class="fcd-tag">${s.tag}</div><div class="fcd-title">${s.title}</div><div class="fcd-body">${s.body}</div>`;
+    det.className='fc-detail-inner show';
+  },180);
+  activeFC=i;
+}
+
+// ══════════════════════════════════════
+// ROI CALCULATOR
+// ══════════════════════════════════════
+function nzd(n){return '$'+Math.round(n).toLocaleString('en-NZ')}
+function calcROI(){
+  const v1=+document.getElementById('r1').value,v2=+document.getElementById('r2').value;
+  const v3=+document.getElementById('r3').value,v4=+document.getElementById('r4').value;
+  document.getElementById('d1').textContent=nzd(v1);
+  document.getElementById('d2').textContent=v2+' listing'+(v2!==1?'s':'');
+  document.getElementById('d3').textContent=nzd(v3);
+  document.getElementById('d4').textContent=nzd(v4);
+  const cost=v3+v4,rev=v1*v2,net=rev-cost,mult=cost>0?rev/cost:0;
+  document.getElementById('o1').textContent='−'+nzd(cost);
+  document.getElementById('o2').textContent='+'+nzd(rev);
+  const o3=document.getElementById('o3');
+  o3.textContent=(net>=0?'+':'')+nzd(net);o3.className='out-v big '+(net>=0?'pos':'neg');
+  const vd=document.getElementById('roi-vd');
+  vd.className='roi-verdict '+(net>=0?'v-ok':'v-bad');
+  const be=v1>0?Math.ceil(cost/v1):0;
+  vd.innerHTML=net>=0
+    ?`System returns <b id="rmult">${mult.toFixed(1)}×</b> every dollar invested. Break-even: <b>${be<=1?'less than 1 listing':be+' listings'}</b>/month.`
+    :`Running at a loss at these numbers. Increase listings or reduce spend to find your break-even. Need: <b>${be} listing${be!==1?'s':''}</b>/month.`;
+}
+['r1','r2','r3','r4'].forEach(id=>document.getElementById(id).addEventListener('input',calcROI));
+calcROI();
+
+// ══════════════════════════════════════
+// CONTACT RACE
+// ══════════════════════════════════════
+const RACE=[{pct:100,l:'Within 1 min'},{pct:78,l:'5 minutes'},{pct:32,l:'30 minutes'},{pct:12,l:'2 hours'},{pct:4,l:'Next day'}];
+let raceRan=false;
+function resetRace(){
+  RACE.forEach((_,i)=>{document.getElementById('rb'+i).style.width='0%';document.getElementById('rb'+i).textContent='';document.getElementById('rp'+i).textContent='—';});
+  document.getElementById('raceBtn').textContent='▶ Start the clock';
+}
+function runRace(){
+  if(raceRan){resetRace();raceRan=false;return;}
+  raceRan=true;document.getElementById('raceBtn').textContent='↺ Reset';
+  RACE.forEach((d,i)=>setTimeout(()=>{
+    document.getElementById('rb'+i).style.width=d.pct+'%';
+    document.getElementById('rb'+i).textContent=d.l;
+    document.getElementById('rp'+i).textContent=d.pct+'%';
+  },i*300));
+}
+
+// ══════════════════════════════════════
+// BUDGET ALLOCATOR
+// ══════════════════════════════════════
+const SUBS=['Khandallah','Karori','Ngaio','Johnsonville','Miramar','Newtown','Island Bay','Petone'];
+const BUDGET=800;const sv={};SUBS.forEach(s=>sv[s]=0);
+
+function buildSliders(){
+  const w=document.getElementById('subSliders');
+  w.innerHTML=SUBS.map(s=>`
+    <div class="sub-row">
+      <div class="sub-hd">${s}<span id="sv_${s}">$0</span></div>
+      <div class="sub-track"><div class="sub-fill" id="sf_${s}" style="width:0%"></div></div>
+      <input class="sl" type="range" id="ss_${s}" min="0" max="${BUDGET}" step="20" value="0" oninput="ua('${s}')">
+    </div>`).join('');
+  // defaults
+  [['Khandallah',280],['Karori',220],['Ngaio',160]].forEach(([s,v])=>{sv[s]=v;document.getElementById('ss_'+s).value=v;});
+  updateAllocDisplay();
+}
+
+function ua(changed){
+  const val=+document.getElementById('ss_'+changed).value;
+  const usedByOthers=SUBS.filter(s=>s!==changed).reduce((a,s)=>a+(sv[s]||0),0);
+  if(val+usedByOthers>BUDGET){
+    const excess=val+usedByOthers-BUDGET;
+    const others=SUBS.filter(s=>s!==changed&&sv[s]>0);
+    const tot=others.reduce((a,s)=>a+(sv[s]||0),0)||1;
+    others.forEach(s=>{sv[s]=Math.max(0,sv[s]-Math.round((sv[s]/tot)*excess));document.getElementById('ss_'+s).value=sv[s];});
+  }
+  sv[changed]=val;updateAllocDisplay();
+}
+
+function updateAllocDisplay(){
+  const total=Object.values(sv).reduce((a,b)=>a+b,0);
+  document.getElementById('leftB').textContent=nzd(BUDGET-total);
+  SUBS.forEach(s=>{
+    const v=sv[s]||0,pct=Math.round((v/BUDGET)*100);
+    const sf=document.getElementById('sf_'+s),svel=document.getElementById('sv_'+s);
+    if(sf)sf.style.width=pct+'%';if(svel)svel.textContent=nzd(v);
+  });
+  const active=SUBS.filter(s=>(sv[s]||0)>=80);
+  document.getElementById('arBars').innerHTML=SUBS.map(s=>{
+    const v=sv[s]||0,score=Math.min(100,Math.round((v/280)*100));
+    const col=v>=200?'#5ab88a':v>=80?'#c49a50':'#6a5040';
+    return `<div class="avb-row"><div class="avb-lbl">${s}</div><div class="avb-track"><div class="avb-fill" style="width:${score}%;background:${col}"></div></div><div class="avb-v">${score}%</div></div>`;
+  }).join('');
+  const t=document.getElementById('arTitle'),b=document.getElementById('arBody');
+  if(active.length===0){t.textContent='No active suburbs';t.style.color='var(--muted)';b.textContent='Allocate at least $80/month to activate a suburb. Under $80 generates minimal impressions.';}
+  else if(active.length>=4){t.textContent='Spread too thin';t.style.color='#c07060';b.textContent='Budget across '+active.length+' suburbs. No suburb has enough presence to dominate. Competitors with concentrated spend win in every one of them.';}
+  else{t.textContent='Strong concentration';t.style.color='#5ab88a';b.textContent='Concentrated across '+active.join(', ')+'. Consistent presence, retargeting audiences building, compound effect visible within 30 days.';}
+}
+buildSliders();
+
+// ══════════════════════════════════════
+// LEAD FORM
+// ══════════════════════════════════════
+let cbChecked=false;
+function toggleCb(){
+  cbChecked=!cbChecked;
+  const cb=document.getElementById('lfCb');
+  cb.className='lf-cb'+(cbChecked?' checked':'');
+  validateForm();
+}
+function validateForm(){
+  const filled=['lf1','lf2','lf3','lf4','lf5'].every(id=>document.getElementById(id).value.trim());
+  document.getElementById('lfSubmit').disabled=!(filled&&cbChecked);
+}
+['lf1','lf2','lf3','lf4','lf5'].forEach(id=>document.getElementById(id).addEventListener('input',validateForm));
+validateForm();
+
+function submitForm(){
+  document.getElementById('leadForm').style.display='none';
+  document.getElementById('lfSuccess').style.display='block';
+}
+
+// ══════════════════════════════════════
+// START
+// ══════════════════════════════════════
+window.addEventListener('resize',()=>{if(cur===1){cancelAnimationFrame(animFrame);resize();draw();}});
+// Init network in background
+setTimeout(()=>{resize();draw();},200);
+</script>
+</body>
+</html>

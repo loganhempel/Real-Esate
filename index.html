@@ -870,7 +870,8 @@ setInterval(cycleWord,2200);
 // ═══════════════════════════════════
 // GATE
 // ═══════════════════════════════════
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxPLACEHOLDER/exec';
+const GATE_URL='https://script.google.com/macros/s/AKfycbzUsx2UYN2ia7fSjNhUsk59kWKooGP-1QO0Q-nCFFzwqKsuVj8niMruv7kRKagu6ZoJaA/exec';
+const BOOK_URL='https://script.google.com/macros/s/AKfycbxUKthJvY3QrJgMr3dCGLDr6eE0TJXYuJDlh_xrz58mSYtJpNzyaq4JRT8MK4iQoa-U/exec';
 
 ['g1','g2','g3','g4','g5','g6'].forEach(id=>{
   const el=document.getElementById(id);
@@ -899,7 +900,7 @@ async function submitGate(){
   };
   // Send to Google Sheets via Apps Script
   try{
-    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    await fetch(GATE_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
   }catch(e){console.log('Sheet submit:',e);}
   // Unlock regardless of fetch result
   gateUnlocked=true;
@@ -1198,7 +1199,7 @@ async function submitBook(){
     timestamp:new Date().toISOString(),
     source:'100-small-nets-booking'
   };
-  try{await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){}
+  try{await fetch(BOOK_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){}
   document.getElementById('bookCard').style.display='none';
   document.getElementById('bookSuccess').style.display='block';
 }
